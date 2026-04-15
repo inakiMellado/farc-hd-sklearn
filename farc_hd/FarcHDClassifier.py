@@ -153,7 +153,7 @@ class FarcHDClassifier(ClassifierMixin, BaseEstimator):
             X_raw, y_raw,
             accept_sparse=False,
             dtype=np.float64,
-            force_all_finite=True,
+            ensure_all_finite=True,
             ensure_min_samples=2,
             copy=True,
             order='C'
