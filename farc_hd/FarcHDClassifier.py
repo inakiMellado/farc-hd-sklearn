@@ -9,7 +9,8 @@ import os
 from sklearn.base import BaseEstimator, ClassifierMixin, _fit_context
 from sklearn.utils.validation import check_X_y, check_array, check_is_fitted
 from sklearn.utils.multiclass import unique_labels
-from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import LabelEncoder as _LabelEncoder
+from sklearn.utils.multiclass import check_classification_targets
 
 # Importamos tus componentes internos
 from .FARCHD.myDataSetV2 import myDataSet
@@ -19,6 +20,8 @@ from .FARCHD.Apriori import Apriori
 from .FARCHD.Population import Population
 from .org.core.Randomize import Randomize
 from .FARCHD.Fuzzy import fuzzificacion_total_numba
+
+
 
 # --- CLASE AUXILIAR PARA SILENCIAR SALIDA ---
 class HiddenPrints:
@@ -74,7 +77,6 @@ class FarcHDClassifier(ClassifierMixin, BaseEstimator):
         Names of features seen during fit (if passed as pandas DataFrame).
     """
 
-    # AÑADIDO: Restricciones de parámetros para la validación de scikit-learn
     _parameter_constraints = {
         "n_labels": [int],
         "minsup": [float],
@@ -127,7 +129,7 @@ class FarcHDClassifier(ClassifierMixin, BaseEstimator):
         tags.input_tags.sparse = False
         return tags
     
-    # AÑADIDO: Decorador de contexto para optimizar la validación en Pipelines
+    
     @_fit_context(prefer_skip_nested_validation=True)
     def fit(self, X = None, y = None):
         # 0. GESTIÓN DE ENTRADA (KEEL vs STANDARD)
@@ -176,7 +178,7 @@ class FarcHDClassifier(ClassifierMixin, BaseEstimator):
         # 2. ESCUDO DE CLASES (Evita explotar con 1 sola clase)
         self.classes_, y_encoded = np.unique(y, return_inverse=True)
         if len(self.classes_) < 2:
-            self.label_encoder_ = LabelEncoder().fit(y)
+            self.label_encoder_ = _LabelEncoder().fit(y)
             self.final_rule_base_ = None
             return self
 
@@ -200,7 +202,7 @@ class FarcHDClassifier(ClassifierMixin, BaseEstimator):
 
         # 6. MOTOR INTERNO (Envuelto en silencio)
         with HiddenPrints():
-            self.label_encoder_ = LabelEncoder().fit(y)
+            self.label_encoder_ = _LabelEncoder().fit(y)
             
             self.train_dataset_ = myDataSet()
             self.train_dataset_.set_data_from_numpy(
