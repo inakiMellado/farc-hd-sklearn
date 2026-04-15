@@ -1,16 +1,19 @@
-"""This file shows how to write test based on the scikit-learn common tests."""
-
-# Authors: scikit-learn-contrib developers
-# License: BSD 3 clause
-
+import pytest
 from sklearn.utils.estimator_checks import parametrize_with_checks
 
-from farc_hd.utils.discovery import all_estimators
+from farc_hd.FarcHDClassifier import FarcHDClassifier
 
 
-# parametrize_with_checks allows to get a generator of check that is more fine-grained
-# than check_estimator
-@parametrize_with_checks([est() for _, est in all_estimators()])
+# Instantiate the model with minimal resources to prevent 
+# the default tests from melting GitHub Actions' RAM.
+lightweight_model = FarcHDClassifier(
+    n_labels=3,
+    depth=2,
+    max_trials=20,
+    population_size=5
+)
+
+@parametrize_with_checks([lightweight_model])
 def test_estimators(estimator, check, request):
-    """Check the compatibility with scikit-learn API"""
+    """Check the compatibility with scikit-learn API."""
     check(estimator)
