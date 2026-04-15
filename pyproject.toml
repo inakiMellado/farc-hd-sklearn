@@ -65,6 +65,7 @@ lint = { depends_on = ["black", "ruff"]}
 [tool.pixi.feature.test.dependencies]
 pytest = "*"
 pytest-cov = "*"
+coverage = "<7.5"
 
 [tool.pixi.feature.test.tasks]
 test = { cmd = "pytest -vsl ." }
