@@ -125,10 +125,7 @@ class FarcHDClassifier(ClassifierMixin, BaseEstimator):
         self.categorical_variables = categorical_variables
 
     def __sklearn_tags__(self):
-        tags = super().__sklearn_tags__()
-        tags.input_tags.positive_only = True
-        tags.input_tags.sparse = False
-        return tags
+        return super().__sklearn_tags__()
     
     
     @_fit_context(prefer_skip_nested_validation=True)
@@ -179,8 +176,10 @@ class FarcHDClassifier(ClassifierMixin, BaseEstimator):
         # 2. ESCUDO DE CLASES (Evita explotar con 1 sola clase)
         self.classes_, y_encoded = np.unique(y, return_inverse=True)
         if len(self.classes_) < 2:
+            self.n_features_in_ = X.shape[1]
             self.label_encoder_ = _LabelEncoder().fit(y)
             self.final_rule_base_ = None
+            self.is_single_class_ = True
             return self
 
         # 3. RESET DE SEMILLA (Idempotencia)
@@ -234,9 +233,12 @@ class FarcHDClassifier(ClassifierMixin, BaseEstimator):
     def predict(self, X):
         check_is_fitted(self, ['final_rule_base_', 'data_base_'])
         
+        
         # AÑADIDO: reset=False para no sobreescribir los atributos inferidos en fit()
         X = check_array(X, dtype=np.float64, accept_sparse=False, order='C')
         # Manejo de caso "1 sola clase"
+        if getattr(self, "is_single_class_", False):
+            return np.full(X.shape[0], self.classes_[0])
         if self.final_rule_base_ is None:
             return np.full(X.shape[0], self.classes_[0])
 
