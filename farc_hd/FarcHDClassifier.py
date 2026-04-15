@@ -31,7 +31,7 @@ class HiddenPrints:
         sys.stdout = self._original_stdout
         self.devnull.close()
 
-class FarcHDClassifier(BaseEstimator, ClassifierMixin):
+class FarcHDClassifier(ClassifierMixin, BaseEstimator):
     """
     Fuzzy Association Rule-based Classifier for High-Dimensional problems (FARC-HD).
     
@@ -121,6 +121,12 @@ class FarcHDClassifier(BaseEstimator, ClassifierMixin):
         self.keel_dataset = keel_dataset
         self.categorical_variables = categorical_variables
 
+    def __sklearn_tags__(self):
+        tags = super().__sklearn_tags__()
+        tags.input_tags.positive_only = True
+        tags.input_tags.sparse = False
+        return tags
+    
     # AÑADIDO: Decorador de contexto para optimizar la validación en Pipelines
     @_fit_context(prefer_skip_nested_validation=True)
     def fit(self, X = None, y = None):
@@ -138,7 +144,21 @@ class FarcHDClassifier(BaseEstimator, ClassifierMixin):
                 warnings.warn("Aviso: Ignorando X e y pasados a fit(); usando 'keel_dataset'.")
         else:
             X_raw, y_raw = X, y
+
+        # 1. VALIDACIÓN SKLEARN 
+        # (Movido aquí para que sea lo primero en procesar los datos raw)
+        X, y = self._validate_data(
+            X_raw, y_raw,
+            accept_sparse=False,
+            dtype=np.float64,
+            force_all_finite=True,
+            ensure_min_samples=2, # Crucial para pasar el test de datos vacíos
+            copy=True,
+            order='C'
+        )
+        y = np.asarray(y).ravel()
         
+        # Ahora que X e y son seguras, ejecutamos tu lógica de avisos
         if self.keel_dataset is None and self.categorical_variables is None:
             warnings.warn(
                 "\n" + "!"*60 +
@@ -152,16 +172,6 @@ class FarcHDClassifier(BaseEstimator, ClassifierMixin):
                 "!"*60 + "\n",
                 UserWarning
             )
-        # 1. VALIDACIÓN SKLEARN
-        X, y = self._validate_data(
-            X_raw, y_raw,
-            accept_sparse=False,
-            dtype=np.float64,
-            force_all_finite=True,
-            copy=True,
-            order='C'
-        )
-        y = np.asarray(y).ravel()
 
         # 2. ESCUDO DE CLASES (Evita explotar con 1 sola clase)
         self.classes_, y_encoded = np.unique(y, return_inverse=True)
