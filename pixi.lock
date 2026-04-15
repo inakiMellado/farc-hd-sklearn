@@ -2779,8 +2779,8 @@ packages:
   timestamp: 1763918099466
 - pypi: ./
   name: farc-hd-sklearn
-  version: 0.1.dev13+gd90123767.d20260415
-  sha256: 6d270c38f273adc3182f81e1144e9e8ff5e950bea8fa4b374b3ba3b36df75d29
+  version: 0.1.dev14+g6f360c66c.d20260415
+  sha256: 4b2e3136039639736ccc11cea406a0f10a96b5573e3be9af911c03dd8bd5d49a
   requires_dist:
   - numpy>=1.20.0
   - scikit-learn>=1.4.2

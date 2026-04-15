@@ -66,7 +66,7 @@ lint = { depends-on = ["black", "ruff"]}
 pytest = "*"
 
 [tool.pixi.feature.test.tasks]
-test = { cmd = "pytest -vsl -p no:cov ." }
+test = { cmd = "pytest -vsl -p no:cov farc_hd/tests" }
 
 [tool.pixi.feature.doc.dependencies]
 matplotlib = "*"
@@ -135,5 +135,5 @@ ignore=[
 "doc/_templates/numpydoc_docstring.py"=["F821", "W292"]
 
 [tool.pytest.ini_options]
-addopts = "--doctest-modules --color=yes"
-doctest_optionflags = "NORMALIZE_WHITESPACE"
+norecursedirs = ["doc", "examples", "build", "dist", ".pixi", "org"]
+addopts = "--color=yes -vsl -p no:cov"

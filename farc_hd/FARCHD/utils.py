@@ -151,7 +151,7 @@ def selLineal(individuals, k):
     :mod:`random` module.
 
     """
-    popWithIndex = sorted(enumerate(individuals), key=lambda (i, ind): ind.fitness.values[0], reverse=True)
+    popWithIndex = sorted(enumerate(individuals), key=lambda x: x[1].fitness.values[0], reverse=True)
     (indices, pop) = zip(*popWithIndex)
     N = len(pop)
 
@@ -247,7 +247,7 @@ def replacementMaximoElitismo(pop, offspring, maximizar=False):
 #   - pasanHijos [bool]: True si al menos un descendiente entró en la nueva población.
 def replacementCHC(pop, offspring, maximizar=False):
     # Padres e hijos compiten para formar parte de la siguietne generacion
-    popWithIndex = sorted(enumerate(pop + offspring), key=lambda (i, ind): ind.fitness.values[0], reverse=maximizar)[:len(pop)]
+    popWithIndex = sorted(enumerate(pop + offspring), key=lambda x: x[1].fitness.values[0], reverse=maximizar)[:len(pop)]
     (indicesSelected, pop) = zip(*popWithIndex)
     pop = list(pop)
     hijosQuePasan = len(filter(lambda x: x >= len(pop), indicesSelected))
