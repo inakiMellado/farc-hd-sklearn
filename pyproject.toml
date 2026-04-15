@@ -38,7 +38,7 @@ Issues = "https://github.com/inakiMellado/farc-hd-sklearn/issues"
 [tool.setuptools_scm]
 version_file = "farc_hd/_version.py"
 
-[tool.pixi.project]
+[tool.pixi.workspace]
 channels = ["conda-forge"]
 platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
 
@@ -49,7 +49,7 @@ numpy = ">=1.20.0"
 numba = ">=0.55.0"
 
 [tool.pixi.pypi-dependencies]
-farc_hd = { path=".", editable=true }
+farc-hd-sklearn = { path=".", editable=true }
 
 [tool.pixi.feature.lint.dependencies]
 # The version below should be aligned with the one of `.pre-commit-config.yaml`
@@ -60,7 +60,7 @@ ruff = "0.4.2"
 [tool.pixi.feature.lint.tasks]
 black = { cmd = "black --check --diff farc_hd && black --check --diff examples" }
 ruff = { cmd = "ruff check --output-format=full farc_hd && ruff check --output-format=full examples" }
-lint = { depends_on = ["black", "ruff"]}
+lint = { depends-on = ["black", "ruff"]}
 
 [tool.pixi.feature.test.dependencies]
 pytest = "*"
