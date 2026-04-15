@@ -14,8 +14,6 @@ class WarmUpParameters(ParseParameters):
     def getValidationInputFile(self): return self.dummy_file
     def getTestInputFile(self): return self.dummy_file
     def getAlgorithmName(self): return "JIT-WarmUp"
-    
-    # Archivos de salida (nombres dummy, aunque BullWarmUp no escribirá nada)
     def getTrainingOutputFile(self): return "trash.tra"
     def getTestOutputFile(self): return "trash.tst"
     def getOutputFile(self, idx): return f"trash_{idx}.txt"

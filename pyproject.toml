@@ -67,7 +67,7 @@ pytest = "*"
 pytest-cov = "*"
 
 [tool.pixi.feature.test.tasks]
-test = { cmd = "pytest -vsl --cov=farc_hd --cov-report=xml farc_hd" }
+test = { cmd = "pytest -vsl ." }
 
 [tool.pixi.feature.doc.dependencies]
 matplotlib = "*"
