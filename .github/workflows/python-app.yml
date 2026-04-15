@@ -1,5 +1,4 @@
 name: Unit Tests
-
 on:
   push:
     branches: [main]
@@ -10,18 +9,14 @@ jobs:
   build:
     strategy:
       matrix:
-        # Simplificamos para probar primero en Ubuntu, que es el más rápido
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
-
       - name: Setup Pixi
         uses: prefix-dev/setup-pixi@v0.8.1
         with:
-          # Quitamos la versión fija para que use la última disponible
           environments: test
           frozen: false
-
       - name: Run tests
-        run: pixi run -e test test
+        run: pixi run -e test pytest -vsl -p no:cov .
