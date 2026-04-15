@@ -6,11 +6,13 @@ import time
 import sys
 import os
 # AÑADIDO: _fit_context
+
 from sklearn.base import BaseEstimator, ClassifierMixin, _fit_context
-from sklearn.utils.validation import check_X_y, check_array, check_is_fitted
-from sklearn.utils.multiclass import unique_labels
 from sklearn.preprocessing import LabelEncoder as _LabelEncoder
 from sklearn.utils.multiclass import check_classification_targets
+from sklearn.utils.validation import check_X_y, check_array, check_is_fitted
+from sklearn.utils.multiclass import unique_labels
+
 
 # Importamos tus componentes internos
 from .FARCHD.myDataSetV2 import myDataSet
@@ -76,7 +78,6 @@ class FarcHDClassifier(ClassifierMixin, BaseEstimator):
     feature_names_in_ : ndarray of shape (`n_features_in_`,)
         Names of features seen during fit (if passed as pandas DataFrame).
     """
-
     _parameter_constraints = {
         "n_labels": [int],
         "minsup": [float],
@@ -147,17 +148,17 @@ class FarcHDClassifier(ClassifierMixin, BaseEstimator):
         else:
             X_raw, y_raw = X, y
 
-        # 1. VALIDACIÓN SKLEARN 
-        # (Movido aquí para que sea lo primero en procesar los datos raw)
-        X, y = self._validate_data(
+        # 1. VALIDACIÓN SKLEARN
+        X, y = check_X_y(
             X_raw, y_raw,
             accept_sparse=False,
             dtype=np.float64,
             force_all_finite=True,
-            ensure_min_samples=2, # Crucial para pasar el test de datos vacíos
+            ensure_min_samples=2,
             copy=True,
             order='C'
         )
+        self.n_features_in_ = X.shape[1]
         y = np.asarray(y).ravel()
         
         # Ahora que X e y son seguras, ejecutamos tu lógica de avisos
@@ -234,8 +235,7 @@ class FarcHDClassifier(ClassifierMixin, BaseEstimator):
         check_is_fitted(self, ['final_rule_base_', 'data_base_'])
         
         # AÑADIDO: reset=False para no sobreescribir los atributos inferidos en fit()
-        X = self._validate_data(X, reset=False, dtype=np.float64, accept_sparse=False, order='C')
-
+        X = check_array(X, dtype=np.float64, accept_sparse=False, order='C')
         # Manejo de caso "1 sola clase"
         if self.final_rule_base_ is None:
             return np.full(X.shape[0], self.classes_[0])
